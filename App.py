@@ -33,6 +33,7 @@ llm2 = VertexAI(
 )
 
 os.environ["OPENWEATHERMAP_API_KEY"] = '5708941459d96133b31f54f2f15bd9aa'
+
 weather = OpenWeatherMapAPIWrapper()
 
 #weather_data = weather.run("Columbus")
@@ -61,32 +62,42 @@ Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
 #The following runs after the user selects their desired info. By default, they will get the Temp in New York, USA (prepopulated)
 generate_result = st.sidebar.button("Tell Me!")
 if generate_result:
-    #Send API call based on selected city
-    st.write(f"Getting weather for {city}, {country}.")
-    weather_data = weather.run(f"{country}, {city}")
+    #Initialize as none to ensure previous calls don't negate error handling
+    weather_data = None
 
-    # Parse what the user wants to see using mask
-    user_wants = np.array([Temperature_Box, Humidity_Box, Cloud_Cover_Box, Precipitation_Box, Wind_Box])
-    strings= np.array(["Temperature", "Humidity", "Cloud Cover", "Precipitation", "Wind Speed/Direction"])
-    selected_strings = strings[user_wants]
+    #Send API call based on selected country/city. If the try doesn't work with the API, send error message to user
+    try:
+        weather_data = weather.run(f"{city},{country}")
+    # Process weather_data
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
-    #Depending on what they want, we join the strings correctly to pass to LLM in a coherent sentence
-    if len(selected_strings) > 2:
-        output = ", ".join(selected_strings[:-1]) + " and " + selected_strings[-1] #if we have more than 2 we want to add "and" for the last
-    elif len(selected_strings) == 2:
-        output = " and ".join(selected_strings) #if we have only 2 we want to add "and" 
-    else:
-        output = selected_strings[0] # do nothing 
+    #If an exception was triggered above then weather_data will still be none and this won't run
+    if weather_data:
+        st.write(f"Getting weather for {city}, {country}.")
+    
+        # Parse what the user wants to see using mask
+        user_wants = np.array([Temperature_Box, Humidity_Box, Cloud_Cover_Box, Precipitation_Box, Wind_Box])
+        strings= np.array(["Temperature", "Humidity", "Cloud Cover", "Precipitation", "Wind Speed/Direction"])
+        selected_strings = strings[user_wants]
 
-    #Provided the sentence from above, we pass it to the prompt template 
-    prompt_template_weather = PromptTemplate(
-        input_variables=['output', 'weather_data'],
-        template= 'The user wants to know the {output} about the following data. Here is the data: {weather_data}. Please reply with the location name and the requested data.'
-        )
+        #Depending on what they want, we join the strings correctly to pass to LLM in a coherent sentence
+        if len(selected_strings) > 2:
+            output = ", ".join(selected_strings[:-1]) + " and " + selected_strings[-1] #if we have more than 2 we want to add "and" for the last
+        elif len(selected_strings) == 2:
+            output = " and ".join(selected_strings) #if we have only 2 we want to add "and" 
+        else:
+            output = selected_strings[0] # do nothing 
+
+        #Provided the sentence from above, we pass it to the prompt template 
+        prompt_template_weather = PromptTemplate(
+            input_variables=['output', 'weather_data'],
+            template= 'The user wants to know the {output} about the following data. Here is the data: {weather_data}. Please reply with the location name and the requested data.'
+            )
+            
         
-      
-    #Now we access our chain
-    #NOTE NEED TO UPDATE THIS WITH BOTH LLM OPTIONS 
-    chain = LLMChain(llm=llm1, prompt=prompt_template_weather) #Create our chain and print to Streamlit
-    result = chain.run(output=output, weather_data=weather_data)
-    st.write(result)
+        #Now we access our chain
+        #NOTE NEED TO UPDATE THIS WITH BOTH LLM OPTIONS 
+        chain = LLMChain(llm=llm2, prompt=prompt_template_weather) #Create our chain and print to Streamlit
+        result = chain.run(output=output, weather_data=weather_data)
+        st.write(result)
