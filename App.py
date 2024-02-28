@@ -38,8 +38,9 @@ os.environ["OPENWEATHERMAP_API_KEY"] = '5708941459d96133b31f54f2f15bd9aa'
 weather = OpenWeatherMapAPIWrapper()
 
 #weather_data = weather.run("Columbus")
-st.title("Weather Worldwide")
-st.image('weather_logo.png')
+
+st.sidebar.title("Weather Worldwide")
+st.sidebar.image('weather_logo.png')
 
 ###############
 # Sidebar for Country selection
@@ -49,13 +50,13 @@ countries_and_cities = {
     'UK': ['London', 'Manchester', 'Birmingham']
 }
 
-st.sidebar.title("Please select your location:")
+st.sidebar.header("Please select your location:")
 country = st.sidebar.selectbox('Select a country:', list(countries_and_cities.keys()))
 cities = countries_and_cities[country]
 city = st.sidebar.selectbox('Select a city:', cities)
 ###############
 #Select Weather Boxes
-st.sidebar.title("Please select your weather interest:")
+st.sidebar.header("Please select your weather interest:")
 Temperature_Box = st.sidebar.checkbox(label="Temperature (Required)", value=True, disabled=True)
 Humidity_Box = st.sidebar.checkbox(label="Humidity") 
 Cloud_Cover_Box = st.sidebar.checkbox(label="Cloud Cover")
@@ -63,7 +64,7 @@ Precipitation_Box = st.sidebar.checkbox(label="Precipitation")
 Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
 ##############
 #Select Model
-st.sidebar.title("Change the model (optional):")
+st.sidebar.header("Change the model (optional):")
 LLM_choice = st.sidebar.selectbox("Model choice:", ["Text Bison", "Gemini Pro"])
 
 
