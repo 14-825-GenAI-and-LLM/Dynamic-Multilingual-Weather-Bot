@@ -45,9 +45,13 @@ st.sidebar.image('weather_logo.png')
 ###############
 # Sidebar for Country selection
 countries_and_cities = {
-    'USA': ['New York', 'Los Angeles', 'Chicago', 'Pittsburgh', 'Use this to test errors from API :)'],
-    'Canada': ['Toronto', 'Vancouver', 'Montreal'],
-    'UK': ['London', 'Manchester', 'Birmingham']
+    'United States': ['Pittsburgh', 'Boston',  'Chicago', 'Dallas', 'Los Angeles', 'Miami', 'New York', 'Seattle', 'Use this to test errors from API :)'],
+    'Canada': ['Jasper', 'Toronto', 'Vancouver', 'Montreal'],
+    'United Kingdom': ['London', 'Manchester', 'Liverpool', 'Birmingham'],
+    'Japan': ['Tokyo', 'Osaka', 'Kyoto', 'Sapporo'],
+    'France': ['Paris', 'Lyon', 'Marseille', 'Nice'],
+    'Spain': ['Madrid', 'Barcelona', 'Valencia', 'Seville'],
+    'India': ['New Delhi', 'Mumbai', 'Bengaluru', 'Kolkata']
 }
 
 st.sidebar.header("Please select your location:")
@@ -65,7 +69,7 @@ Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
 ##############
 #Select Model
 st.sidebar.header("Change the model (optional):")
-LLM_choice = st.sidebar.selectbox("Model choice:", ["Text Bison", "Gemini Pro"])
+LLM_choice = st.sidebar.selectbox("Model choice:", [ "Gemini Pro", "Text Bison"])
 
 
 #The following runs after the user selects their desired info. By default, they will get the Temp in New York, USA (prepopulated)
