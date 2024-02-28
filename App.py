@@ -6,6 +6,7 @@ from langchain_google_vertexai import VertexAI
 from langchain import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 import numpy as np
+import requests
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json" # place the key JSON file in the same folder as your notebook
 PROJECT_ID = "gen-ai-llm-14825" # use your project id 
@@ -37,7 +38,8 @@ os.environ["OPENWEATHERMAP_API_KEY"] = '5708941459d96133b31f54f2f15bd9aa'
 weather = OpenWeatherMapAPIWrapper()
 
 #weather_data = weather.run("Columbus")
-st.title("Weather Finder")
+st.title("Weather Worldwide")
+st.image('weather_logo.png')
 
 ###############
 # Sidebar for Country selection
@@ -68,7 +70,6 @@ LLM_choice = st.sidebar.selectbox("Model choice:", ["Text Bison", "Gemini Pro"])
 #The following runs after the user selects their desired info. By default, they will get the Temp in New York, USA (prepopulated)
 generate_result = st.sidebar.button("Tell Me!")
 if generate_result:
-    #Initialize as none to ensure previous calls don't negate error handling
     weather_data = None
 
     #Send API call based on selected country/city. If the try doesn't work with the API, send error message to user
@@ -98,7 +99,7 @@ if generate_result:
         #Provided the sentence from above, we pass it to the prompt template 
         prompt_template_weather = PromptTemplate(
             input_variables=['output', 'weather_data'],
-            template= 'The user wants to know the {output} about the following data. Here is the data: {weather_data}. Please reply with the location name and the requested data.'
+            template= 'The user wants to know the {output} from the following: {weather_data}. This data is in metric units. Please reply with the location name and the requested data.'
             )
             
         
