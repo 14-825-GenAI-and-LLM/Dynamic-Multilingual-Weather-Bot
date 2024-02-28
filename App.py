@@ -40,7 +40,7 @@ weather = OpenWeatherMapAPIWrapper()
 st.title("Weather Finder")
 ###############
 countries_and_cities = {
-    'USA': ['New York', 'Los Angeles', 'Chicago', 'Pittsburgh'],
+    'USA': ['New York', 'Los Angeles', 'Chicago', 'Pittsburgh', 'Use this to test errors from API :)'],
     'Canada': ['Toronto', 'Vancouver', 'Montreal'],
     'UK': ['London', 'Manchester', 'Birmingham']
 }
@@ -70,7 +70,9 @@ if generate_result:
         weather_data = weather.run(f"{city},{country}")
     # Process weather_data
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error(f"\u26A0 An error occurred with the weather API: \"{e}\"  
+                 \nWe apologize for the inconvenience!  
+                 \nPlease try again later, or proceed here to search manually:")
 
     #If an exception was triggered above then weather_data will still be none and this won't run
     if weather_data:
