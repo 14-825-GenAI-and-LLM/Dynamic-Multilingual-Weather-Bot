@@ -38,27 +38,33 @@ weather = OpenWeatherMapAPIWrapper()
 
 #weather_data = weather.run("Columbus")
 st.title("Weather Finder")
+
 ###############
+# Sidebar for Country selection
 countries_and_cities = {
     'USA': ['New York', 'Los Angeles', 'Chicago', 'Pittsburgh', 'Use this to test errors from API :)'],
     'Canada': ['Toronto', 'Vancouver', 'Montreal'],
     'UK': ['London', 'Manchester', 'Birmingham']
 }
 
-# Sidebar for Country selection
+st.sidebar.title("Please select your location:")
 country = st.sidebar.selectbox('Select a country:', list(countries_and_cities.keys()))
 cities = countries_and_cities[country]
 city = st.sidebar.selectbox('Select a city:', cities)
 ###############
-
-st.sidebar.title("Please select your interest:")
+#Select Weather Boxes
+st.sidebar.title("Please select your weather interest:")
 Temperature_Box = st.sidebar.checkbox(label="Temperature (Required)", value=True, disabled=True)
 Humidity_Box = st.sidebar.checkbox(label="Humidity") 
 Cloud_Cover_Box = st.sidebar.checkbox(label="Cloud Cover")
 Precipitation_Box = st.sidebar.checkbox(label="Precipitation")
 Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
-
 ##############
+#Select Model
+st.sidebar.title("Change the model (optional):")
+LLM_choice = st.sidebar.selectbox("Model choice:", ["Text Bison", "Gemini Pro"])
+
+
 #The following runs after the user selects their desired info. By default, they will get the Temp in New York, USA (prepopulated)
 generate_result = st.sidebar.button("Tell Me!")
 if generate_result:
@@ -70,7 +76,7 @@ if generate_result:
         weather_data = weather.run(f"{city},{country}")
     # Process weather_data
     except Exception as e:
-        st.error(f"\u26A0 An error occurred with the weather API: \"{e}\"  \n\nWe apologize for the inconvenience!  \nPlease try again later.)
+        st.error(f"\u26A0 An error occurred with the weather API: \"{e}\"  \n\nWe apologize for the inconvenience!  \nPlease try again later.")
 
     #If an exception was triggered above then weather_data will still be none and this won't run
     if weather_data:
@@ -97,7 +103,11 @@ if generate_result:
             
         
         #Now we access our chain
-        #NOTE NEED TO UPDATE THIS WITH BOTH LLM OPTIONS 
-        chain = LLMChain(llm=llm2, prompt=prompt_template_weather) #Create our chain and print to Streamlit
+        if LLM_choice =="Text Bison":
+            llm=llm1
+        else:
+            llm=llm2
+
+        chain = LLMChain(llm=llm, prompt=prompt_template_weather) #Create our chain and print to Streamlit
         result = chain.run(output=output, weather_data=weather_data)
         st.write(result)
