@@ -13,9 +13,9 @@ Weather Worldwide is an innovative weather forecasting application built using S
 
 
 ## Set Up API Keys and Credentials
-    - Obtain and set up API keys for OpenWeatherMap and DeepL.
-    - Set the Google Cloud credentials by placing the `key.json` file in your project directory and referencing it in the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.
-    - Update `PROJECT_ID`, `REGION`, and `BUCKET_URI` with your Google Cloud configurations for Vertex AI.
+- Obtain and set up API keys for OpenWeatherMap and DeepL.
+- Set the Google Cloud credentials by placing the `key.json` file in your project directory and referencing it in the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.
+- Update `PROJECT_ID`, `REGION`, and `BUCKET_URI` with your Google Cloud configurations for Vertex AI.
 
 
 ## Usage
