@@ -3,15 +3,21 @@ from langchain_community.utilities import OpenWeatherMapAPIWrapper
 import streamlit as st
 import vertexai
 from langchain_google_vertexai import VertexAI
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 import numpy as np
 import requests
+import deepl
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json" # place the key JSON file in the same folder as your notebook
 PROJECT_ID = "gen-ai-llm-14825" # use your project id 
 REGION = "us-central1"  #
 BUCKET_URI = f"gs://gen-ai-llm-bucket"  # create your own bucket
+
+# PROJECT_ID = "genai-and-lllm" # use your project id
+# REGION = "us-central1"  #
+# BUCKET_URI = f"gs://gen-ai-storage-bucket-for-class"  # create your own bucket
+
 
 vertexai.init(project=PROJECT_ID, location=REGION, staging_bucket=BUCKET_URI)
 
@@ -33,6 +39,9 @@ llm2 = VertexAI(
     verbose=True,
 )
 
+deepL_key = "379fa3bc-7867-46d9-bace-750f6fd673b3:fx"
+translator = deepl.Translator(deepL_key)
+
 os.environ["OPENWEATHERMAP_API_KEY"] = '5708941459d96133b31f54f2f15bd9aa'
 
 weather = OpenWeatherMapAPIWrapper()
@@ -53,6 +62,13 @@ countries_and_cities = {
     'Spain': ['Madrid', 'Barcelona', 'Valencia', 'Seville'],
     'India': ['New Delhi', 'Mumbai', 'Bengaluru', 'Kolkata']
 }
+languages = ['BG - Bulgarian', 'CS - Czech', 'DA - Danish', 'DE - German', 'EL - Greek', 'EN-GB - English (British)', 
+             'EN-US - English (American)', 'ES - Spanish', 'ET - Estonian', 'FI - Finnish', 'FR - French', 'HU - Hungarian', 'ID - Indonesian', 
+             'IT - Italian', 'JA - Japanese', 'KO - Korean', 'LT - Lithuanian', 'LV - Latvian', 'NB - Norwegian (Bokmål)', 'NL - Dutch', 
+             'PL - Polish', 'PT - Portuguese (unspecified variant for backward compatibility; please select PT-BR or PT-PT instead)', 
+             'PT-BR - Portuguese (Brazilian)', 'PT-PT - Portuguese (all Portuguese varieties excluding Brazilian Portuguese)', 
+             'RO - Romanian', 'RU - Russian', 'SK - Slovak', 'SL - Slovenian', 'SV - Swedish', 'TR - Turkish', 'UK - Ukrainian', 
+             'ZH - Chinese (simplified)']
 
 st.sidebar.header("Please select your location:")
 country = st.sidebar.selectbox('Select a country:', list(countries_and_cities.keys()))
@@ -66,6 +82,7 @@ Humidity_Box = st.sidebar.checkbox(label="Humidity")
 Cloud_Cover_Box = st.sidebar.checkbox(label="Cloud Cover")
 Precipitation_Box = st.sidebar.checkbox(label="Precipitation")
 Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
+Lang_Box = st.sidebar.selectbox(label="Language", options=languages, index=6)
 ##############
 #Select Model
 st.sidebar.header("Change the model (optional):")
@@ -86,12 +103,13 @@ if generate_result:
 
     #If an exception was triggered above then weather_data will still be none and this won't run
     if weather_data:
-        st.write(f"Getting weather for {city}, {country}.")
-    
+        st.write(f"Getting weather for {city}, {country}; in {Lang_Box}.")
+
         # Parse what the user wants to see using mask
         user_wants = np.array([Temperature_Box, Humidity_Box, Cloud_Cover_Box, Precipitation_Box, Wind_Box])
         strings= np.array(["Temperature", "Humidity", "Cloud Cover", "Precipitation", "Wind Speed/Direction"])
         selected_strings = strings[user_wants]
+
 
         #Depending on what they want, we join the strings correctly to pass to LLM in a coherent sentence
         if len(selected_strings) > 2:
@@ -116,4 +134,10 @@ if generate_result:
 
         chain = LLMChain(llm=llm, prompt=prompt_template_weather) #Create our chain and print to Streamlit
         result = chain.run(output=output, weather_data=weather_data)
+        if Lang_Box[:2] == "EN" or Lang_Box[:2] == "PT":
+            target = Lang_Box[:5]
+        else:
+            target = Lang_Box[:2]
+            
+        result = translator.translate_text(text = result, target_lang=target)
         st.write(result)
