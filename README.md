@@ -1,5 +1,8 @@
 # Weather Worldwide
 
+## Video Walkthrough
+https://cmu.box.com/s/tq285hmakq6ujcshtpwfcj8a7zelqu5w
+
 ## Introduction
 Weather Worldwide is an innovative weather forecasting application built using Streamlit, providing users with real-time weather data across a broad selection of global locations. It integrates OpenWeatherMap for weather data, Vertex AI for advanced data processing, and DeepL for multilingual support, offering a user-friendly interface for accessing accurate weather forecasts.
 
