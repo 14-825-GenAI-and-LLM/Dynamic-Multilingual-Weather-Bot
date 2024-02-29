@@ -28,7 +28,6 @@ Weather Worldwide is an innovative weather forecasting application built using S
 - **OpenWeatherMap API**: For fetching real-time weather data.
 - **Vertex AI**: For advanced data processing using machine learning models.
 - **DeepL API**: For translating the weather data into different languages.
-- **Google Cloud**: For cloud services and infrastructure.
 
 ## Acknowledgments
 - OpenWeatherMap for providing the weather data API.
