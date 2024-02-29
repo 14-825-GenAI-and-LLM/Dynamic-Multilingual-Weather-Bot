@@ -8,6 +8,7 @@ from langchain.chains import LLMChain, SequentialChain
 import numpy as np
 import requests
 import deepl
+import time
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json" # place the key JSON file in the same folder as your notebook
 PROJECT_ID = "gen-ai-llm-14825" # use your project id 
@@ -48,8 +49,9 @@ weather = OpenWeatherMapAPIWrapper()
 
 #weather_data = weather.run("Columbus")
 
-st.sidebar.title("Weather Worldwide")
+
 st.sidebar.image('weather_logo.png')
+st.sidebar.title("Weather Worldwide")
 
 ###############
 # Sidebar for Country selection
@@ -76,12 +78,13 @@ cities = countries_and_cities[country]
 city = st.sidebar.selectbox('Select a city:', cities)
 ###############
 #Select Weather Boxes
-st.sidebar.header("Please select your weather interest:")
-Temperature_Box = st.sidebar.checkbox(label="Temperature (Required)", value=True, disabled=True)
-Humidity_Box = st.sidebar.checkbox(label="Humidity") 
-Cloud_Cover_Box = st.sidebar.checkbox(label="Cloud Cover")
-Precipitation_Box = st.sidebar.checkbox(label="Precipitation")
-Wind_Box = st.sidebar.checkbox(label="Wind Speed/Direction")
+st.header("Please select your weather interest:")
+Temperature_Box = st.checkbox(label="Temperature (Required)", value=True, disabled=True)
+col1, col2 = st.columns(2)
+Humidity_Box = col1.checkbox(label="Humidity") 
+Cloud_Cover_Box = col1.checkbox(label="Cloud Cover")
+Precipitation_Box = col2.checkbox(label="Precipitation")
+Wind_Box = col2.checkbox(label="Wind Speed/Direction")
 Lang_Box = st.sidebar.selectbox(label="Language", options=languages, index=6)
 ##############
 #Select Model
@@ -90,7 +93,7 @@ LLM_choice = st.sidebar.selectbox("Model choice:", [ "Gemini Pro", "Text Bison"]
 
 
 #The following runs after the user selects their desired info. By default, they will get the Temp in New York, USA (prepopulated)
-generate_result = st.sidebar.button("Tell Me!")
+generate_result = st.button("Give me the Weather details!")
 if generate_result:
     weather_data = None
 
@@ -103,8 +106,10 @@ if generate_result:
 
     #If an exception was triggered above then weather_data will still be none and this won't run
     if weather_data:
-        #st.write(weather_data)
-        st.write(f"Getting weather for {city}, {country} in {Lang_Box}.")
+        with st.spinner(f"Getting weather for {city}, {country} in {Lang_Box}."):
+            time.sleep(8)
+        st.success('Done!')
+        # st.write(f"Getting weather for {city}, {country} in {Lang_Box}.")
 
         # Parse what the user wants to see using mask
         user_wants = np.array([Temperature_Box, Humidity_Box, Cloud_Cover_Box, Precipitation_Box, Wind_Box])
