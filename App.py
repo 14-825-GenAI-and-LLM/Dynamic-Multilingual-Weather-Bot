@@ -103,7 +103,8 @@ if generate_result:
 
     #If an exception was triggered above then weather_data will still be none and this won't run
     if weather_data:
-        st.write(f"Getting weather for {city}, {country}; in {Lang_Box}.")
+        #st.write(weather_data)
+        st.write(f"Getting weather for {city}, {country} in {Lang_Box}.")
 
         # Parse what the user wants to see using mask
         user_wants = np.array([Temperature_Box, Humidity_Box, Cloud_Cover_Box, Precipitation_Box, Wind_Box])
@@ -122,7 +123,7 @@ if generate_result:
         #Provided the sentence from above, we pass it to the prompt template 
         prompt_template_weather = PromptTemplate(
             input_variables=['output', 'weather_data'],
-            template= 'The user wants to know the {output} from the following: {weather_data}. This data is in metric units. Please reply with the location name and the requested data.'
+            template= 'The user wants to know the {output} from the following: {weather_data}.'
             )
             
         
@@ -139,5 +140,5 @@ if generate_result:
         else:
             target = Lang_Box[:2]
             
-        result = translator.translate_text(text = result, target_lang=target)
+        result = translator.translate_text(text = result, target_lang=target, preserve_formatting=True)
         st.write(result)
