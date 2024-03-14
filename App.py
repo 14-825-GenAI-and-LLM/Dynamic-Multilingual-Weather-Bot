@@ -11,9 +11,9 @@ import deepl
 import time
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="key.json" # place the key JSON file in the same folder as your notebook
-PROJECT_ID = "gen-ai-llm-14825" # use your project id 
-REGION = "us-central1"  #
-BUCKET_URI = f"gs://gen-ai-llm-bucket"  # create your own bucket
+PROJECT_ID = "" # use your project id 
+REGION = ""  #
+BUCKET_URI = ""  # create your own bucket
 
 # PROJECT_ID = "genai-and-lllm" # use your project id
 # REGION = "us-central1"  #
